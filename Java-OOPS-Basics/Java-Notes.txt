@@ -1,0 +1,153 @@
+Day1:
+Encapsulation 	= Data Hiding 	+ Abstraction
+
+Enscapsulation = process of binding the data members and its behaviours. 
+Data Hiding = hiding the data member from outside world using private access modifier.
+Abstraction = representing only required services to client without showing internal working of it. (GUI)
+
+Public class Account{							________________________	
+	private double bal;		--> data hiding			|Bank of India	ATM	|	
+	public double getBal(){					---> 	|			|
+		return bal;	<------------------------------------ 	|Check Bal 		|
+	}				Abstraction			|
+   }									|Update Bal		|
+									|_______________________|	
+Every class is an encapsulation. 
+Tightly encapsulated class if and only if all data members are private. 
+
+
+Day2:
+Is-a-relationship (Inheritance):
+1. implement using extends keyword
+2. main advantage is code reusability.(example: Loan --> Vloan,HLoan,Ploan etc 900 methods 90hrs 250 are common)
+3. Java does not support for multiple inheritance in class due to ambiguity problem. But the same is not the case in interface. we can implement multiple inheritance in interface bcz interface contains only declaration and there is single implementation available. 
+
+public class P{
+	public void m(){
+		Sopln("Parent");
+	}
+}
+public C extends P{
+	public void m1(){
+       Sopln("Child");
+	}
+}
+
+Public Static class Client{
+   p.s.v.m(String[] args){
+    P p = new P();		---> creating parents class obj
+    p.m();
+    p.m1();	---> error: cannot find symbol m1 in Parent class
+ 
+    P p1 = new C();
+    p1.m();
+    p1.m1();	--> error: incompatible type found P required C. 
+We can use parent referrence for child obj but even though we can only call parent methods. Big advatage of creating parent referrence with child obj is polymorphism. 
+
+    C c = new C();
+    c.m();	---> inheritance. child can automatically inherit parent properties. 
+    c.m1();
+
+    C c = new P(); --> error
+ }
+}
+
+
+Day3:
+Has-a-relationship(Composition/Aggregation):
+
+public class Engine{
+	// engine specific funcationality
+}
+public class car{
+ Engine e = new Engine()
+}
+
+Here in above example car has a relatinship with engine. by creating engine obj in car class we can use all engine functinalities in car. 
+No specific keyword is used in composition. mostly new() used. 
+code reusability is main advatage. 
+
+composition vs aggregation: 
+without existance of container obj(university) there may not be existance of contained obj(dept). and this strong association between container obj and contained obj called composition. 
+
+without exiatnce of container obj(dept) there can be existance of contained obj(professors). so this weak association between container and contained obj called aggregation. 
+
+
+--> method signature in java: method name followed by argument type. no return type part of it. 
+m1(int,float)
+Note: In a class 2 methods with same signature not allowed. even though return type is diff. it throws error bcz method signature des not contain return type. 
+
+
+Day4
+Overloading: same method name with different argument types. 
+class Test{
+
+ public void m1(int a){
+	sopln("int m1")
+ }
+ public void m1(float a){
+   sopln("Float m1")
+ }
+}
+public client{
+p.s.v.m(String[] args){
+ Test t = new Test();
+ t.m1(10);	--> m1(int)
+ t.m1(10.4f);	--> m1(float)
+ t.m1('a');	--> m1(int)	auto promotion
+ t.m1(100l);	--> m1(float)
+ t.m1(100.99);	--> compile error
+ }
+}
+
+We can see t.m1('a') will execute bcz of automatic promotion in overloading. java checks for exact match in overloading however if does not find so java will not throw immediate compile time error rather looks for next higher args type method
+and consider if available otherwise error. 
+
+char -------> int --> long---> float --> double
+	       ^	(automatic promotion in overloading)
+byte--> short -^ 
+
+Note: while resolving method overloading, java always give priority to child type args compared with parent class. 
+A(Object o){} , A(String s){} --> in main class{ A(null) --> call child type args--> A(String s)
+we will get compile time error if 2 child type args will be there like String and StringBuffer.
+
+
+Day5: 
+Overriding: parent class method is redefined in child class. late binding/dynamic polimorphism/runtime polymorphism
+P p = new C();
+p.marry()	--> at compile time java checks does parent class has marry method or not if yes then proceed--> 
+jvm at run time java checks p is of child obj so it calls marry method of child class if no marry method in child then error
+
+overriding rules:
+1. co-varient(child class) return type can be different 
+2. same private method can be defined in child class as parent which is valid but its not overriding. 
+3. final parent methods are not allowed to override
+4. abstract parent to non-abstract and non-abstract parent to abstract child method overriding is allowed. 
+abstract class P{			 class P{
+ public abstract void m();			 	public void m();
+  }						}
+class C extends P{			  abstract class C extends P{
+ public void m{						public abstract void m();
+ }							}
+					  class D extends C{
+  						public void m(){
+						}
+					   }
+5. all child classes of Runtime Exception and Error are unchecked exceptions and remaining all are checked
+6. If child class throws checked exception then parent class must throw the same checked exception or its parent, if not compile time error comes. But there are no restrictions for unchecked exceptions. 
+7. We cannot override static method as non-static
+8. parent method is non-static and if child method is static then overriding is not allowed. 
+9. when child and parent class have static method then its not method overriding rather method hiding. 
+method resolution takes care by compiler in method hiding. 
+
+
+Method hiding					Method overriding
+both static					non-static
+compile time					run time execution
+both methods available				only child methods available
+
+
+
+
+
+
