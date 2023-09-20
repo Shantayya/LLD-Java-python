@@ -285,3 +285,55 @@ Interface: its a service requirement specification. Class is responsible for pro
 Every method inside interface is public and abstract
 
 
+
+Day9: Multi-threading: executing several tasks simultaneously.
+(main objective--> inc performance + reduce processor idle time i.e response time)
+
+1. Process based multi-tasking: 
+executing several tasks simultaneously where each task is a separate independent pgm(process).
+while typing java pgm in system, we can listen audio + downlaod a file from net all these tasks executed independently. best suitable for OS level. 
+
+2. Thread based multi-tasking
+executing several tasks simultaneously where each task is a separate independent part of same pgm(process). and each independent part is called thread. 
+Best suitable at programatic level
+
+Note: compared with old lang developing multi-threaded apps in java is easy as java provided inbuilt rich support for API.
+
+
+2 ways to define a thread
+1. extending Thread class
+
+Class myThread extends Thread    # defines thread
+{
+  public void run(){
+    -----------------
+    -----------------   # job of thread
+    }
+}
+Class MainThread{
+p.s.v.m(Stringp[ args){
+myThread t = new myThread();		--> instanciation of thread
+t.start();		--> starting of thread
+ }
+}
+
+Note: thread execution order we can't predict as its done by thread scheduler. t.start() method is responsible to create new thread and execute run method inside it. 
+If we directly execute run() then it will run as normal method in main thread instead of creating new thread. 
+2. overloading of run method is possibe but start() can invoke no-argument run method. other overloaded method have to call explicitely as normal method. 
+3. If we override start(), our start method will execute as normal method without creating new thread.  
+4. Once thread is started and we tried to start threas again then java throws runtime error as Illegal ThreadState Exception 
+
+start(){
+1. register thread with thread scheduler
+2. perform all other mandatory activities
+3. invoke run()
+}
+
+
+---Thread lifecyle-----
+			      ________________			    ________________						  _________
+ t = new myThread()--> |New/Born state| ----->t.start()----> |ready/runnable| --> thread scheduler allocates processor --> |running| --> run() completes--> |Dead|
+
+
+2. implementing Runnable interface
+
