@@ -1,3 +1,18 @@
+Day0: OOPS concepts
+---Java source file structure-----
+1. java file can contain any number of classes.
+2. you can provide any name to java file in above case.But if java file contains public class then java ffile name must be public class name. 
+3. atmax only one public class must be there in java file.
+4. java file containing number of classes with main methods so after compiling number of .class files will be created with class names so we can run class specific file.
+
+-----Import statment-----
+1. Explicit import: import java.util.ArrayList;
+Always use this for readability
+2. Implicit import: import java.util.*;
+
+Package: group of related classes and interfaces. In any java file atmost one package statements allowed. 
+package com.shantayya.ocja	--> these are unique and referrenced from internet domain name from reverse order
+
 Day1:
 Encapsulation 	= Data Hiding 	+ Abstraction
 
@@ -139,7 +154,7 @@ class C extends P{			  abstract class C extends P{
 8. parent method is non-static and if child method is static then overriding is not allowed. 
 9. when child and parent class have static method then its not method overriding rather method hiding. 
 method resolution takes care by compiler in method hiding. 
-
+10. overriding is allowed only for methods not for data members. (Var resolution is always takes care by compiler)
 
 Method hiding					Method overriding
 both static					non-static
@@ -148,6 +163,125 @@ both methods available				only child methods available
 
 
 
+properties				Overloading				Overriding
+1. method signature			must be different 			must be same
+2. return types				no rules				co-varient return typees allowed
+3. private,static,final methods		Can be overloaded			Cannot be overridden
+4. Access modifiers			N restrictions 				Scope of modifiers cannot be reduced but can be increased
+5. throws claus				No restriction				If child class method throws checked exception the parent method must throw same 										checked exception or its parent exception else throws error.
+6. Method resolution			compile time				run time
+					based on referrence type		based on object type
 
+polymorphism: one form but multiple implementation 
+
+AL al = new AL()					List l = new AL()
+child class referrence to child obj			parent class referrence to child class obj
+can call any method from child + parent			can only call method from parent
+can hold only AL obj					can hold any child type obj like AL,LL,Vector etc
+if sure about runtime obj type				if not sure about runtime obj type
+						
+
+				OOPS
+Encapsulation			Polymorphism			Inheritance		---> 3 pillers 
+(security)			(Flexibility)			(code-reusability)
+
+
+Day6: Coupling (degree of dependancy between components)
+cohesion: clear funcationlity defined for component
+
+object type-casting: use parent referrence to hold child object. 
+Object o = new String("Hello");
+
+we can use Interface referrence to hold implemented class object. 
+Runnable r = new Thread();
+
+A			a		= 	(C)			d
+class/Interface	 name of referrnece var		class/interface		referrence var
+
+1. there should be relation between type d and C either parent-child or child-parent or same type for conversion. otherwise compile error(inconvertable types found)
+2. C should be same or derived type of A. otherwise compile time error(incompatible type)
+3. underlying object type of d should be same as C or derived type of C.
+
+Object o = new String("Hello")
+StringBuffer sb = (StringBuffer)o;
+
+1st rule pass
+2nd rule pass
+3rd rule failed 
+
+
+Day7: Static control flow
+1. Identification of static members from top to bottom (static var assigned default value = 0)
+2. execution of static variable assignments and static blocks from top to bottom
+3. Execution of main method
+
+class base{
+
+static int i = 10;
+static{
+m1();
+Sopl("First static block");
+}
+p.s.v.m(String[] args){
+m1();
+Sopl("main method");
+}
+p.s.v.m1(){
+Sopl(j);
+}
+static{
+Sopl("Second static block");
+}
+static int j=20;
+}
+
+----javac base----
+i=0[Read indirectly write only]
+j=0[RIWO]
+0
+First static block
+Second static block
+20
+main method
+
+Note: var called from static block is direct read and var called from main method is indirect read. so if static var is just default read and called directly from static block then get compile time error.
+
+class Base{						javac Base
+							i=0[RIWO]
+static int i = 10;
+static{
+Sopl(i);	---> direct read
+}
+p.s.v.m(String[] args){
+Sopl(i);	---> indirect read
+ }
+}
+
+
+day8: Constructors and access modifiers
+main purpose of contructor is to initialize an object.
+
+
+visibility						public		protected	default		private
+within same class					yes		yes		yes		yes
+
+child class of same package				yes		yes		yes		No
+
+Non-child class of same pkg				yes		yes		yes		No
+
+child class of outside pkg				yes		yes		No		No
+							         [use only child ref]		
+non-child class of outside pkg				yes		No		No		No
+
+
+abstract method: only contains the declaration and child classes will provide implementation. 
+class Loan{
+public abstract double getInterestRates();
+}
+
+abstract class: partially implemented class. If class does not have complete implementation or contains abstract methods. Its not necessary to have abstract methods to  be abstract class. object cannot be created for abstract class. 
+
+Interface: its a service requirement specification. Class is responsible for providing implementation for all methods in interface. 
+Every method inside interface is public and abstract
 
 
