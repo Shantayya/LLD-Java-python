@@ -301,7 +301,7 @@ Note: compared with old lang developing multi-threaded apps in java is easy as j
 
 
 2 ways to define a thread
-1. extending Thread class
+1. extending Thread class: class --> thread class --> runnable interface
 
 Class myThread extends Thread    # defines thread
 {
@@ -327,13 +327,171 @@ start(){
 1. register thread with thread scheduler
 2. perform all other mandatory activities
 3. invoke run()
-}
-
-
----Thread lifecyle-----
-			      ________________			    ________________						  _________
- t = new myThread()--> |New/Born state| ----->t.start()----> |ready/runnable| --> thread scheduler allocates processor --> |running| --> run() completes--> |Dead|
+}							         <-------|anather wait state|------notify()<------------Waiting state 												 ↓  1. If thread completed			 	   ^
+								 ↓  2. If time expires				           ^ wait(time)
+								 ↓  3. if waiting thread got interupted			   |
+								 ↓  <----------------------------------------------Waiting state (Blocked for joining)	
+								 ↓  ↓ 1. If thread completed				   |  ^	
+								 ↓  ↓ 2. If time expires				   |  | t2.join() ot t2.join(time)	
+---Thread lifecyle-----						 ↓  ↓ 3. if waiting thread got interupted			   |  |
+		       ________________	 starts new thread   ________________						   |__|_____
+ t = new myThread()--> |New/Born state| ----->t.start()----> |ready/runnable| --> thread scheduler allocates processor -->| running  --> run() completes--> |Dead|
+								  ^							   |  ↓
+								  ^---------------------Thread.yeild() --------------------|  ↓
+								  ^							      ↓ 
+								  ^					  		      ↓ 
+								  ^ ------------------------------------------------------- Sleep state
+									1. If thread completed
+									2. If sleep thread got interupted
+									
 
 
 2. implementing Runnable interface
+class myRunnable implements Runnable{
+  public void run(){
+   ----------------
+   ----------------
+  }
+ }
+class ThreadDemo{
+   p.s.v.m(String[] args){
+     myRunnable r = new myRunnable();
+     Thread t = new Thread(r);			
+     t.start();
+   }
+}
 
+myRunnable r = new myRunnable();
+  Thread t1 = new Thread();
+  Thread t2 = new Thread(r);
+Case studies:
+1. t1.start(); --> starts new thread and execute thread empty implementation
+2. t1.run(); --> execute thread run() without creating new thread
+3. t2.start(); -->  starts new thread and execute myRunnable run() implementation
+4. t2.run(); --> no new thread created and myRunnable run() implemented as normal method.
+5. r.start(); --> compile time error
+6. r.run(); -->  no new thread created and myRunnable run() implemented as normal method.
+
+Note: always recommended to use 2nd option to implement thread because in 1st option we can't extend other class so miss inheritance. 
+Thread scheduler use priorities(1-10 range) while allocating processor. thread with highest priority will get chance first. 
+
+------Thread class constructors----
+Thread t = new Thread();
+Thread t = new Thread(Runnable r);
+Thread t = new Thread(String name);
+Thread t = new Thread(Runnable r,String name);
+Thread t = new Thread(ThreadGroup g,String name);
+Thread t = new Thread(ThreadGroup g,Runnable r);
+Thread t = new Thread(ThreadGroup g,Runnable r,String name);
+Thread t = new Thread(ThreadGroup g,Runnable r,String name,long stacksize);
+
+Thread.currentThread.getName(t)	---> to get thread name
+Thread.yeild --> to pause current thread to give chance to waiting threat t execute if no waiting thread or low priority thread then current thread continue. 
+t2.join() --> if t1 thread wants t wait untill other thread t2 to complete then t1 can call join method. t2.join(1000) --> t1 wait only 1000 ms to complete t2
+Thread.sleep(time) --> if thread does not want to do any task for specific amount of time. 
+
+
+day10: Synchronization
+when multiple threads accessing same java object which can cause data inconsistency problem alled race condition. this can be resolved using Synchronized keyword. 
+
+1. Synchronized only applicable for methods but not for class and variables. 
+2. only one thread allowed to execute method when decalred as synchronized which can fix data inconsistency problem. 
+3. if there is no specific requirement don't use synchronized keyword it lead to performance issue.(Increase waiting time of threads)
+
+Note: Lock concept is defined based on object not for methods. Every object has 2 areas (1. synchronized area (for update operation) 2. Non-synchronized area(only read operation). If you are dong update operation in non-synchronized area then its worst prgm practice. 
+
+class ReservationSystem{
+ 
+   checkAvailability(){		---> non-synchronized 
+     ------------
+     ----------
+   }
+   bookTikct(){			---> should be synchronized 
+     ------------
+     ---------
+   }
+}
+
+case study:
+1. If multiple threads are operating on different objects then synchronization is not required. when we call same synchronized method with diff objects then we can get irregular output. 
+
+public synchronized void wish(){
+   Sopl("Welcome"+name);
+ }
+
+Display d1 = new Display();
+Display d2 = new Display();
+Therad t1 = new Thread(d1,"Dhoni");
+Therad t2 = new Thread(d1,"Kohli");
+t1.start();
+t2.start();
+
+2. But if synchronized method decalred as static then even though diff objects calling same synch method we will get regular output due to class level clock obtained by thread.
+public static synchronized void wish(){
+   Sopl("Welcome"+name);
+ }
+
+
+---synchronized block----
+When a very few lines of code out of whole code in method need synchronization then its recommended to delcare that code as synchronized(this) block instead of synchronized method. 
+
+synchronized(this)		---> get lock of current object
+synchronized(obj)		-->  get lock of perticular obj
+synchronized(className.class)	-->  to get lock of class
+
+
+-----Inter thread communication-----
+wait(): thread expecting an updation call wait() method. always throws InterruptedException 
+notify(): thread which is responsible for update can call notify() after update so that waiting thread can continue its execution. 
+notifyAll(): notify all waiting threads but at a time only one thread will get lock and execute. depends on jvm to provide lock 
+
+based on functionality that they can call any class object. above methods are defined in Object class thats why they are called in obj class not in thread class. 
+
+class ThreadB extends Thread{
+   int total;
+  public void run(){
+   Sopln("child threa starts calculation");
+   synchronized(this){
+   for(int i=1;i<=1000;i++){
+    total += i;
+   }
+   Sopln("child thread trying to give notification");
+   this.notify();
+  }
+ }
+}
+class ThreadA{
+  p.s.v.m(String[] args){
+   ThreadB b = new ThreadB();
+   Sopln("Main method trying to call wait method");
+   b.start();
+   synchronized(b){
+    b.wait();
+   }
+  Sopln("Main method got notification");
+  Sopln(b.total); 
+ }
+}
+
+Note: you must call above methods in synchronized block. otherwise you will get Illegalmonitorstateexception. call wait(time) method with time if there is no guarantee that someone will give notification. 
+
+Example: producer-consumer is best example for inter thread communication. update expecting thread (consumer thread) can call wait() and updating thread(producer thread) can call notify(). 
+
+
+day11: -------Deadlock------------
+two threads are waiting for each other reasource forever such type of infinite waiting is called deadlock. synchronized is the only keyword for deadlock situation so while using synchronized keyword have to take special care. 
+starvation: long waiting of a thread where waiting ends at certain point called starvation. (100 threads where 99 threads have 10 priority and 1 has 1 priority so one thread will wait for 99 threads to complete and then get lock at last)  
+
+Note: there is no solution to resolve deadlock only prevention technques available. 
+
+
+
+Day12: ThreadGroup(java.lang package and direct child class of Object)
+Based on funcationality we can group threads in single unit called ThreadGroup. it also contains sub-treadgroups. main advantage of ThreadGroup is we can perform common operations easily.
+Thread.currentThread().getThreadGroup().getName();
+
+---------ThreadGroup constructors-------
+ThreadGroup g = new ThreadGroup(String groupname)			--> parent group of this ThreadGroup is main threadgroup which is exeuting it.
+
+ 
+Note: Every ThreadGroup is child of system group in java. 
