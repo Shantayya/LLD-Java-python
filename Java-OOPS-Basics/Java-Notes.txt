@@ -486,12 +486,138 @@ Note: there is no solution to resolve deadlock only prevention technques availab
 
 
 
-Day12: ThreadGroup(java.lang package and direct child class of Object)
+Day12: ThreadGroup(java.lang package and direct child class of Object class)
 Based on funcationality we can group threads in single unit called ThreadGroup. it also contains sub-treadgroups. main advantage of ThreadGroup is we can perform common operations easily.
 Thread.currentThread().getThreadGroup().getName();
 
 ---------ThreadGroup constructors-------
 ThreadGroup g = new ThreadGroup(String groupname)			--> parent group of this ThreadGroup is main threadgroup which is exeuting it.
+ThreadGroup g1 = new ThreadGroup(ThreadGroup g, String groupname)	--> parent thread group plus current threadgroup name
 
+following are ThreadGroup methods:
+String getName()
+int getMaxPriority()
+void setMaxPriority(int p)
+ThreadGroup getParent()	
+void list()				--> print info about ThreadGroup to console
+int activeCount()			--> shows number active threads in ThreadGroup
+int activeGroupCount()			--> shows number active threadsGroups present in current ThreadGroup 
+int enumerate(Thread[] t)		--> copy all active thread into provided thread array
+int enumerate(ThreadGroup[] g)		--> copy all active threadGroups into provided threadGroup array
+boolean isDaemon()			
+void setDaemon(boolean b)		 
+void interrupt()			--> to interrupt all waiting or sleeping threads in threadGroup
+void destroy()				--> To destroy threadGroup and its subThreadGroups
+
+Note: Every ThreadGroup is child of system group in java.
+
+
+
+day13:------java.util.concurrent package------------
+Synchronized keyword has many drawbacks
+1. Can't try for lock without waiting
+2. deadlock
+3. performance overhead
+4. synchronized keyword used for methods and blocks but not possible to use across multiple methods.
+
+to overcome above problems java.util.concurrent.locks package introduced. 
+
+1. Lock interface: 
+Lock object is similar to implicit lock acquired by thread to execute synchronized method or block. but lock provides extensive operations. 
+lock interface methods:
+void lock()			--> used to acquire lock if lock already available otherwise wait until getting lock. same as traditional synchronized keyword. 
+boolean tryLock()		--> to acquire lock without waiting if lock available then execute thread safe operaton with lock else continue its operation. never wait for lock
+
+boolean tryLock(long time,TimeUnit unit) --> lock not available then wait for specified amt of time else continue its execution. 
+
+TimeUnit(DAYS,HOUR,MINUTE,SECONDS....) present in java.util.concurrent package
+
+void unlock()			--> to release lock. to call this method current must be owner of lock otherwise will get runtime exception. 
+
+
+2. ReentrantLock()		
+it is implementation class of Lock interface and direct child class of Object. Reentrant means thread can acquire same lock multiple tmes without any issue. 
+internally reentrant lock increaments threads personal count when called lock method and decreament count value when thread calls unlock method. lock will be released when count reaches 0. 
+
+ReentrantLock l = new ReentrantLock()
+ReentrantLock l = new ReentrantLock(boolean fairness)				--> fairness true then follows FCFS policy for waiting threads. default value is false
+
+int getHoldCount()		--> get number of locks held by current thread
+
+
+Examples:
+import java.util.concurrent.lock;
+Class Display{
+ReentrantLock() l = new ReentrantLock();
+public void wish(){				--> instead of synchronized keyword we are using reentrant lock
+   l.lock();
+   Sopl("Welcome"+name);
+   l.unlock();
+ }
+}
+
+Display d1 = new Display();
+Display d2 = new Display();
+Therad t1 = new Thread(d1,"Dhoni");
+Therad t2 = new Thread(d1,"Kohli");
+t1.start();
+t2.start();
+
+
+
+Day14: ThreadPools (Executor Framework)
+ThreadPool framework allows you to manage and reuse a pool of worker threads to efficiently execute multiple tasks concurrently.
+
+ExecutorService es = Executors.newFixedThreadPool(3);		--> create threadPool
+es.submit(job)							--> submit job to executor service
+es.shutdown()							--> shutdown executor service
+
+
+Note: After Thread completes the run() method it does not return anything when we implement Runnable interface. So if you want thread to return then use Callable 
+interface with call() method which returns Object. and to hold this returned callable object we need <<Future>> object.
+In run() method we use try-catch block to handle exception but in call() method we can directly throw exception as its parent class throws checked exception. 
  
-Note: Every ThreadGroup is child of system group in java. 
+Example:
+import java.util.concurrent.*;
+class MyCallable implemented Callable
+{
+  int num;
+  MyCallable(int number){
+   this.num = number
+  }
+  public Object call() throws Exception{
+    Sopln(Thread.currentThread.getName()+" is responsible to get sum of"+num);
+    int sum;
+    for(int i=1;i<=this.num;i++)
+    {
+      sum += i;
+    }
+   return sum;
+ }
+}
+
+class CallableDemo{
+  p.s.v.m(String[] args){
+  MyCallable[] jobs={ 	new MyCallable(10),
+		      	new MyCallable(20),
+			new MyCallable(30),
+			new MyCallable(40),
+			new MyCallable(50),
+			new MyCallable(60),};
+
+ExecutorService es = Execuotors.newFixedThreadPool(3);
+for(MyCallable job: jobs){
+   Future f = es.submit(job);
+   Sopln(f.get());
+ }
+es.shutdown()
+  }
+}
+
+
+----ThreadLocal------
+ThreadLocal class is responsible to define thread specific local variables. 
+Object get()			--> retuns thread local var value associated with current thread
+Object initialValue()		--> returns initialValue of current thread. default return null 
+void set(Object newValue)	--> set new intial value 
+void remove()			--> remove local var associated with current thread
