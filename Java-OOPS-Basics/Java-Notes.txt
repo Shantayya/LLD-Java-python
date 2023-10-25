@@ -1,8 +1,72 @@
+Data Types:
+1. premitive: int,char,boolean (provided by java out of the box)
+2. non-premitive: strings,array,classes etc (user defined)
+
+final: used to declare constant variables in java
+int[] marks = new int[10];	--> static array
+for(int var: iterable){		--> for each loop 	for(int m: marks){ sout(m)}
+}
+
+---2D array-----
+int[][] marks = new int[][]
+
+strings: are immutable in java means if we update the string then its value does not get change rather reference gets changed. 
+string pool is a area inside heap memory to store strings and jvm use it to save space. 
+String s1 = "abc"
+Strng s2 = "abc"   --> string abc will be stored in string pool and (s1,s2) both reference to same value
+String s3 - new String("abc")	--> when we create string with new keyword then string will store outside of string pool but in heap memmory.
+
+---string methods---
+str.charAt(index)	--> get char from string
+str.length()
+str.indexOf('char') or str.indexOf("string")	--> first occurence
+str.equals(str2) --> compare strings based on content instead of obj referrence as happens in (==) case. 
+str.contains("string")	--> true/false based on string contains in str or not.
+string = str.toLowerCase() or str.toUpperCase()	--> update string with lower or upper case str but wont replace str with upper or lower 
+str.substring(start,end)	--> gets substring from start index(included) to end index(excluded).
+
+concatination: use + operator. when concatinated with premitive data types, automatically typecasted to string.  
+ex: string name = "Hello"
+    int a = 5
+    String name2 = name + a	--> Hello5
+
+toString is automatically called when non-primitive types are concatinated. 
+
+----StringBuilder-----
+used to create mutable strings
+StringBuilder sb = new StringBuilder("I love programming")
+sb.append(),insert(index,str),delete(start,end index),reverse() etc
+String prg = sb.toString()			--> to convert into string
+
+---variable scope----
+1. block level scope : variable is accesible inside defined block
+2. class level scope
+
+
+function(datatype... varargs) --> used to accept variable no. of parameters
+
+----Autoboxing & unboxing---------
+Wrapper class: provides a mechanism to use primitive data types as objects.
+int --> Integer
+char --> Character etc
+why we need it: 
+1. collection: java collections need objects instead of primitive types. ArrayList<Integer> arr = new ArrayList<Integer>();
+2. synchronization: java multithreading works with objects not on primitive types. 
+
+Autoboxing: automatic conversion that java compiler makes between primitive types and corresponding object wrapper classes. vice versa conversion is unboxing. 
+int x = 5;
+Integer intObj = x;		--> wrapper class have various utility methods to use. 
+
+Math module: in built module from java. Math.round(number)/ceil(number)/floor(number)/pow(num1,num2)/sqrt(num)
+BigInteger: class from math.BigInteger package used to work on very big intergers. BigInteger a = new BigInteger("number")	--> takes number in string
+		  	
+--------------------------------------------------------------------------
+
 Day0: OOPS concepts
 ---Java source file structure-----
 1. java file can contain any number of classes.
-2. you can provide any name to java file in above case.But if java file contains public class then java ffile name must be public class name. 
-3. atmax only one public class must be there in java file.
+2. you can provide any name to java file in above case.But if java file contains public class then java file name must be public class name. 
+3. at max only one public class must be there in java file.
 4. java file containing number of classes with main methods so after compiling number of .class files will be created with class names so we can run class specific file.
 
 -----Import statment-----
@@ -85,7 +149,7 @@ code reusability is main advatage.
 composition vs aggregation: 
 without existance of container obj(university) there may not be existance of contained obj(dept). and this strong association between container obj and contained obj called composition. 
 
-without exiatnce of container obj(dept) there can be existance of contained obj(professors). so this weak association between container and contained obj called aggregation. 
+without existance of container obj(dept) there can be existance of contained obj(professors). so this weak association between container and contained obj called aggregation. 
 
 
 --> method signature in java: method name followed by argument type. no return type part of it. 
@@ -165,7 +229,7 @@ both methods available				only child methods available
 
 properties				Overloading				Overriding
 1. method signature			must be different 			must be same
-2. return types				no rules				co-varient return typees allowed
+2. return types				no rules				co-varient return types allowed
 3. private,static,final methods		Can be overloaded			Cannot be overridden
 4. Access modifiers			N restrictions 				Scope of modifiers cannot be reduced but can be increased
 5. throws claus				No restriction				If child class method throws checked exception the parent method must throw same 										checked exception or its parent exception else throws error.
@@ -311,7 +375,7 @@ Class myThread extends Thread    # defines thread
     }
 }
 Class MainThread{
-p.s.v.m(Stringp[ args){
+p.s.v.m(String[] args){
 myThread t = new myThread();		--> instanciation of thread
 t.start();		--> starting of thread
  }
@@ -333,7 +397,7 @@ start(){
 								 ↓  <----------------------------------------------Waiting state (Blocked for joining)	
 								 ↓  ↓ 1. If thread completed				   |  ^	
 								 ↓  ↓ 2. If time expires				   |  | t2.join() ot t2.join(time)	
----Thread lifecyle-----						 ↓  ↓ 3. if waiting thread got interupted			   |  |
+---Thread lifecyle-----						 ↓  ↓ 3. if waiting thread got interupted		   |  |
 		       ________________	 starts new thread   ________________						   |__|_____
  t = new myThread()--> |New/Born state| ----->t.start()----> |ready/runnable| --> thread scheduler allocates processor -->| running  --> run() completes--> |Dead|
 								  ^							   |  ↓
@@ -392,13 +456,13 @@ Thread.sleep(time) --> if thread does not want to do any task for specific amoun
 
 
 day10: Synchronization
-when multiple threads accessing same java object which can cause data inconsistency problem alled race condition. this can be resolved using Synchronized keyword. 
+when multiple threads accessing same java object which can cause data inconsistency problem called race condition. this can be resolved using Synchronized keyword. 
 
 1. Synchronized only applicable for methods but not for class and variables. 
 2. only one thread allowed to execute method when decalred as synchronized which can fix data inconsistency problem. 
 3. if there is no specific requirement don't use synchronized keyword it lead to performance issue.(Increase waiting time of threads)
 
-Note: Lock concept is defined based on object not for methods. Every object has 2 areas (1. synchronized area (for update operation) 2. Non-synchronized area(only read operation). If you are dong update operation in non-synchronized area then its worst prgm practice. 
+Note: Lock concept is defined based on object not for methods. Every object has 2 areas (1. synchronized area (for update operation) 2. Non-synchronized area(only read operation). If you are doing update operation in non-synchronized area then its worst prgm practice. 
 
 class ReservationSystem{
  
@@ -422,7 +486,7 @@ public synchronized void wish(){
 Display d1 = new Display();
 Display d2 = new Display();
 Therad t1 = new Thread(d1,"Dhoni");
-Therad t2 = new Thread(d1,"Kohli");
+Therad t2 = new Thread(d2,"Kohli");
 t1.start();
 t2.start();
 
@@ -579,7 +643,7 @@ In run() method we use try-catch block to handle exception but in call() method 
  
 Example:
 import java.util.concurrent.*;
-class MyCallable implemented Callable
+class MyCallable implements Callable
 {
   int num;
   MyCallable(int number){
