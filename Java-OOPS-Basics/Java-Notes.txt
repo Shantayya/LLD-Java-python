@@ -30,7 +30,10 @@ ex: string name = "Hello"
     int a = 5
     String name2 = name + a	--> Hello5
 
-toString is automatically called when non-primitive types are concatinated. 
+toString: is automatically called when non-primitive types are concatinated. we can override toString() to return required string. 
+public String toString(){
+	return ""
+}
 
 ----StringBuilder-----
 used to create mutable strings
@@ -59,6 +62,34 @@ Integer intObj = x;		--> wrapper class have various utility methods to use.
 
 Math module: in built module from java. Math.round(number)/ceil(number)/floor(number)/pow(num1,num2)/sqrt(num)
 BigInteger: class from math.BigInteger package used to work on very big intergers. BigInteger a = new BigInteger("number")	--> takes number in string
+
+
+----------Generics-----------
+Generics specifies the class or methods for different types. Mainly used for collections where parameter types(kind of data) for collections are specified, but not base type(storage ds). 
+1. provides type safety (colletions store any type of data)
+2. resolves type casting (to convert data from collections to any type we need explicite type casting)
+
+Generic class and methods:
+class BankAccount<T>{
+   T t1;
+   BankAccount(T t1){
+    this.t1 = t1;
+    }
+ 
+  public <T> void diposite(T[] money){
+      for(T i: money){
+        System.out.print(i+" ");  
+       }
+ }
+public class Main{
+   public static void main(strings[] args){
+     BankAccount<Integer> b = new BankAcount<>(4);
+     BankAccount<String> s = new BankAccount<>("Hello");
+     
+     Integer[] money = {100,00,300};
+     b.diposite(money);
+  }
+}
 		  	
 --------------------------------------------------------------------------
 
